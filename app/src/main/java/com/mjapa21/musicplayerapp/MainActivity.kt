@@ -228,7 +228,7 @@ fun MusicPlayerScreen(song: String, artist: String, durationInSeconds: Float) {
 
 
                         val scale by animateFloatAsState(
-                            targetValue = if (isPlaying) 0.8f else 1f,
+                            targetValue = if (!isPlaying) 0.8f else 1f,
                             animationSpec = spring(
                                 dampingRatio = 0.3f,
                                 stiffness = Spring.StiffnessMediumLow
