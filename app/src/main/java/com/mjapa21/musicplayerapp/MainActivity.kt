@@ -26,12 +26,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -138,12 +140,32 @@ fun MusicPlayerScreen(song: String, artist: String) {
                         }, onClick = { /* Handle back navigation */ })
                     }
 
-                    LinearProgressIndicator(
-                        progress = { 0.5f },
+
+                    val songDuration = 180f
+                    var songProgress by remember {
+                        mutableFloatStateOf(0f)
+                    }
+
+                    Slider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp)
-
+                            .padding(vertical = 16.dp),
+                        value = songProgress,
+                        onValueChange = { newValue -> songProgress = newValue },
+                        valueRange = 0f..songDuration,
+                        thumb = {
+                            Icon(
+                                painter = painterResource(R.drawable.record_icon_thumb),
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        },
+                        track = { sliderState ->
+                            SliderDefaults.Track(
+                                sliderState = sliderState,
+                                drawStopIndicator = null //needed this to remove the default dot at the end
+                            )
+                        }
                     )
 
                     Row(
@@ -186,7 +208,9 @@ fun MusicPlayerScreen(song: String, artist: String) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .graphicsLayer(
+                                    .graphicsLayer( //NOTE: when I didn't use graphicsLayer and animated button size, other buttons in the row moved, and it looked weird,
+                                        // but with graphicsLayer only the play/pause button is scaled and other buttons remain in the same exact place
+                                        // ALSO the recomposition count is reduced with this approach compared to animating the button size between two values
                                         scaleX = scale,
                                         scaleY = scale
                                     )
