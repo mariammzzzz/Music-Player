@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -165,8 +167,15 @@ fun MusicPlayerScreen(song: String, artist: String) {
                             )
                         }, onClick = {})
 
+
+                        val buttonSize by animateDpAsState(
+                            targetValue = if (isPlaying) 70.dp else 80.dp, animationSpec = spring(
+                                dampingRatio = 0.5f, stiffness = 50f
+                            )
+                        )
+
                         IconButton(
-                            modifier = Modifier.size(70.dp),
+                            modifier = Modifier.size(buttonSize),
                             onClick = { isPlaying = !isPlaying }
                         ) {
                             Box(
@@ -181,8 +190,10 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                 AnimatedContent(
                                     targetState = isPlaying,
                                     transitionSpec = {
-                                        fadeIn(animationSpec = tween(600)).togetherWith(fadeOut(
-                                            animationSpec = tween(600))
+                                        fadeIn(animationSpec = tween(600)).togetherWith(
+                                            fadeOut(
+                                                animationSpec = tween(600)
+                                            )
                                         )
                                     }
                                 ) { isPlaying ->
