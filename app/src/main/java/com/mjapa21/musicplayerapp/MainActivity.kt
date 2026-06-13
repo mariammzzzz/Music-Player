@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +54,10 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MusicPlayerScreen(song: String, artist: String) {
+
+
+    var isPlaying by remember { mutableStateOf(true) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(), topBar = {
             TopAppBar(title = {
@@ -75,7 +84,7 @@ fun MusicPlayerScreen(song: String, artist: String) {
 
             })
         }) { innerPadding ->
-        
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -127,6 +136,61 @@ fun MusicPlayerScreen(song: String, artist: String) {
                             .padding(vertical = 16.dp)
 
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "1:30", fontSize = 12.sp, color = Color.Gray)
+                        Text(text = "3:00", fontSize = 12.sp, color = Color.Gray)
+                    }
+
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(content = {
+                            Icon(
+                                painter = painterResource(R.drawable.back_play),
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }, onClick = {})
+
+                        IconButton(
+                            modifier = Modifier.size(70.dp),
+                            onClick = { isPlaying = !isPlaying }
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(androidx.compose.foundation.shape.CircleShape)
+                                    .background(Color.LightGray),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = if (isPlaying) painterResource(R.drawable.play) else painterResource(
+                                        R.drawable.pause
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(36.dp),
+                                    tint = Color.Unspecified
+                                )
+                            }
+                        }
+
+                        IconButton(content = {
+                            Icon(
+                                painter = painterResource(R.drawable.forward_play),
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }, onClick = {})
+                    }
+
                 }
             }
         }
