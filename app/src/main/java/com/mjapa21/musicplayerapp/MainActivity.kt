@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mjapa21.musicplayerapp.ui.theme.MusicPlayerAppTheme
+import com.mjapa21.musicplayerapp.utils.toPlaybackTimeString
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,8 +174,16 @@ fun MusicPlayerScreen(song: String, artist: String) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "1:30", fontSize = 12.sp, color = Color.Gray)
-                        Text(text = "3:00", fontSize = 12.sp, color = Color.Gray)
+                        Text(
+                            text = songProgress.toInt().toPlaybackTimeString(),
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = songDuration.toInt().toPlaybackTimeString(),
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
                     }
 
 
