@@ -4,6 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -171,14 +176,26 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                     .background(Color.LightGray),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    painter = if (isPlaying) painterResource(R.drawable.play) else painterResource(
-                                        R.drawable.pause
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(36.dp),
-                                    tint = Color.Unspecified
-                                )
+
+
+                                AnimatedContent(
+                                    targetState = isPlaying,
+                                    transitionSpec = {
+                                        fadeIn(animationSpec = tween(600)).togetherWith(fadeOut(
+                                            animationSpec = tween(600))
+                                        )
+                                    }
+                                ) { isPlaying ->
+
+                                    Icon(
+                                        painter = if (isPlaying) painterResource(R.drawable.play) else painterResource(
+                                            R.drawable.pause
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(36.dp),
+                                        tint = Color.Unspecified
+                                    )
+                                }
                             }
                         }
 
