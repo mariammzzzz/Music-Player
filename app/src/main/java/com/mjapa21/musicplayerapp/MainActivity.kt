@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MusicPlayerAppTheme {
                 MusicPlayerScreen(
-                    song = "Touch", artist = "Daft Punk"
+                    song = "Touch", artist = "Daft Punk", durationInSeconds = 180f
                 )
             }
         }
@@ -67,9 +67,8 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MusicPlayerScreen(song: String, artist: String) {
+fun MusicPlayerScreen(song: String, artist: String, durationInSeconds: Float) {
     var isPlaying by remember { mutableStateOf(true) }
-    val songDuration = 180f
     var songProgress by remember {
         mutableFloatStateOf(0f)
     }
@@ -78,8 +77,8 @@ fun MusicPlayerScreen(song: String, artist: String) {
         //updating songProgress in every second when isPlaying is true
         //and when reaching the end of the song, isPlaying is automatically set to false
         while (isPlaying) {
-            if (songProgress + 1f >= songDuration) {
-                songProgress = songDuration
+            if (songProgress + 1f >= durationInSeconds) {
+                songProgress = durationInSeconds
                 isPlaying = false
                 break
             }
@@ -166,7 +165,7 @@ fun MusicPlayerScreen(song: String, artist: String) {
                             .padding(vertical = 16.dp),
                         value = songProgress,
                         onValueChange = { newValue -> songProgress = newValue },
-                        valueRange = 0f..songDuration,
+                        valueRange = 0f..durationInSeconds,
                         thumb = {
                             Icon(
                                 painter = painterResource(R.drawable.record_icon_thumb),
@@ -193,7 +192,7 @@ fun MusicPlayerScreen(song: String, artist: String) {
                             color = Color.Gray
                         )
                         Text(
-                            text = songDuration.toInt().toPlaybackTimeString(),
+                            text = durationInSeconds.toInt().toPlaybackTimeString(),
                             fontSize = 12.sp,
                             color = Color.Gray
                         )
@@ -205,13 +204,27 @@ fun MusicPlayerScreen(song: String, artist: String) {
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+
+                        IconButton(content = {
+                            Icon(
+                                painter = painterResource(R.drawable.shuffle),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = Color.DarkGray
+                            )
+                        }, onClick = {})
+
+
                         IconButton(content = {
                             Icon(
                                 painter = painterResource(R.drawable.back_play),
                                 contentDescription = null,
                                 modifier = Modifier.size(32.dp)
                             )
-                        }, onClick = { songProgress = 0f })
+                        }, onClick = {
+                            songProgress = 0f
+                            isPlaying = true
+                        })
 
 
                         val scale by animateFloatAsState(
@@ -245,9 +258,9 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                 AnimatedContent(
                                     targetState = isPlaying,
                                     transitionSpec = {
-                                        fadeIn(animationSpec = tween(600)).togetherWith(
+                                        fadeIn(animationSpec = tween(500)).togetherWith(
                                             fadeOut(
-                                                animationSpec = tween(600)
+                                                animationSpec = tween(500)
                                             )
                                         )
                                     }
@@ -271,7 +284,16 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(32.dp)
                             )
-                        }, onClick = { songProgress = songDuration })
+                        }, onClick = { songProgress = durationInSeconds })
+
+                        IconButton(content = {
+                            Icon(
+                                painter = painterResource(R.drawable.on_repeat),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = Color.DarkGray
+                            )
+                        }, onClick = {})
                     }
 
                 }
@@ -284,6 +306,6 @@ fun MusicPlayerScreen(song: String, artist: String) {
 @Composable
 private fun MusicPlayerScreenPreview() {
     MusicPlayerAppTheme {
-        MusicPlayerScreen("Touch", "Daft Punk")
+        MusicPlayerScreen(song = "Touch", artist = "Daft Punk", durationInSeconds = 180f)
     }
 }
