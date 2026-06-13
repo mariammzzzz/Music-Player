@@ -5,7 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -168,19 +170,26 @@ fun MusicPlayerScreen(song: String, artist: String) {
                         }, onClick = {})
 
 
-                        val buttonSize by animateDpAsState(
-                            targetValue = if (isPlaying) 70.dp else 80.dp, animationSpec = spring(
-                                dampingRatio = 0.5f, stiffness = 50f
-                            )
+                        val scale by animateFloatAsState(
+                            targetValue = if (isPlaying) 0.8f else 1f,
+                            animationSpec = spring(
+                                dampingRatio = 0.3f,
+                                stiffness = Spring.StiffnessMediumLow
+                            ),
+                            label = "playPauseScale"
                         )
 
                         IconButton(
-                            modifier = Modifier.size(buttonSize),
+                            modifier = Modifier.size(100.dp),
                             onClick = { isPlaying = !isPlaying }
                         ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
+                                    .graphicsLayer(
+                                        scaleX = scale,
+                                        scaleY = scale
+                                    )
                                     .clip(androidx.compose.foundation.shape.CircleShape)
                                     .background(Color.LightGray),
                                 contentAlignment = Alignment.Center
@@ -199,8 +208,8 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                 ) { isPlaying ->
 
                                     Icon(
-                                        painter = if (isPlaying) painterResource(R.drawable.play) else painterResource(
-                                            R.drawable.pause
+                                        painter = if (isPlaying) painterResource(R.drawable.pause) else painterResource(
+                                            R.drawable.play
                                         ),
                                         contentDescription = null,
                                         modifier = Modifier.size(36.dp),
