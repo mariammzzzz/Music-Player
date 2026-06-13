@@ -32,6 +32,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mjapa21.musicplayerapp.ui.theme.MusicPlayerAppTheme
 import com.mjapa21.musicplayerapp.utils.toPlaybackTimeString
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,9 +68,25 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MusicPlayerScreen(song: String, artist: String) {
-
-
     var isPlaying by remember { mutableStateOf(true) }
+    val songDuration = 180f
+    var songProgress by remember {
+        mutableFloatStateOf(0f)
+    }
+
+    LaunchedEffect(isPlaying) { //we need to listen to isPlaying state changes, so we can start or stop the song progress simulation
+        //updating songProgress in every second when isPlaying is true
+        //and when reaching the end of the song, isPlaying is automatically set to false
+        while (isPlaying) {
+            if (songProgress + 1f >= songDuration) {
+                songProgress = songDuration
+                isPlaying = false
+                break
+            }
+            delay(1000)
+            songProgress += 1f
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(), topBar = {
@@ -142,11 +160,6 @@ fun MusicPlayerScreen(song: String, artist: String) {
                     }
 
 
-                    val songDuration = 180f
-                    var songProgress by remember {
-                        mutableFloatStateOf(0f)
-                    }
-
                     Slider(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -198,7 +211,7 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(32.dp)
                             )
-                        }, onClick = {})
+                        }, onClick = { songProgress = 0f })
 
 
                         val scale by animateFloatAsState(
@@ -258,7 +271,7 @@ fun MusicPlayerScreen(song: String, artist: String) {
                                 contentDescription = null,
                                 modifier = Modifier.size(32.dp)
                             )
-                        }, onClick = {})
+                        }, onClick = { songProgress = songDuration })
                     }
 
                 }
